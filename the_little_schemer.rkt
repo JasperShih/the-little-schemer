@@ -125,10 +125,57 @@
           [else (sub1 (my_sub subtrahend (sub1 minuend)))]
           )))
 
+(define addtup
+  (lambda (tup)
+    (cond [(null? tup) 0]
+          [else (my_add (car tup) (addtup (cdr tup)))]
+          )))
 
-;(multi_subst 'j 'd '(d a b d c d))
+(define my_multiply
+  (lambda (multiplicand multiplier)
+    (cond [(zero? multiplier) 0]
+          [else (my_add multiplicand (my_multiply multiplicand (sub1 multiplier)))]
+          )))
 
-(my_sub 5 7)
+(define tup+
+  (lambda (tup1 tup2)
+    (cond [(null? tup1) tup2]
+          [(null? tup2) tup1]
+          [else (cons (my_add(car tup1) (car tup2))
+                      (tup+ (cdr tup1) (cdr tup2)))]
+          )))
+
+(define larger?
+  (lambda (n m)
+    (cond [(zero? n) #f]
+          [(zero? m) #t]
+          [else (larger? (sub1 n) (sub1 m))]
+          )))
+
+(define smaller?
+  (lambda (n m)
+    (cond [(zero? m) #f]
+          [(zero? n) #t]
+          [else (smaller? (sub1 n) (sub1 m))]
+          )))
+
+(define =
+  (lambda (n m)
+    (cond [(larger? n m) #f]
+          [(smaller? n m) #f]
+          [else #t]
+          )))
+
+(define power
+  (lambda (base times)
+    (cond [(zero? times) 1]
+          [(= times 1) base]
+          [(zero? base) 0]
+          [(= base 1) 1]
+          [else (my_multiply base (power base (sub1 times)))]
+          )))
+
+(power 58 2)
 
 
 
