@@ -175,7 +175,147 @@
           [else (my_multiply base (power base (sub1 times)))]
           )))
 
-(power 58 2)
+(define length
+  (lambda (lst)
+    (cond [(null? lst) 0]
+          [else (add1 (length (cdr lst)))]
+          )))
+
+(define pick
+  (lambda (index lst)
+    (cond [(= index 1) (car lst)]
+          [else (pick (sub1 index) (cdr lst))]
+          )))
+
+(define rempick
+  (lambda (index lst)
+    (cond [(= index 1) (cdr lst)]
+          [else (cons (car lst) (rempick (sub1 index) (cdr lst)))]
+          )))
+
+(define no_nums
+  (lambda (lst)
+    (cond [(null? lst) '()]
+          [(number? (car lst)) (no_nums (cdr lst))]
+          [else (cons (car lst) (no_nums (cdr lst)))]
+          )))
+
+
+(define all_nums
+  (lambda (lst)
+    (cond [(null? lst) '()]
+          [(number? (car lst)) (cons (car lst) (all_nums (cdr lst)))]
+          [else (all_nums (cdr lst))]
+          )))
+
+(define eqan?
+  (lambda (atom1 atom2)
+    (cond [(and (number? atom1) (number? atom2)) (= atom1 atom2)]
+          [(or (number? atom1) (number? atom2)) #f]
+          [else (eq? atom1 atom2)]
+          )))
+
+(define one?
+  (lambda (n)
+    (cond [else (= n 1)]
+          )))
+
+(define rember*
+  (lambda (target lst)
+    (cond [(null? lst) lst]
+          [(not(atom? (car lst))) (cons (rember* target (car lst))
+                                   (rember* target (cdr lst)))]
+          [(eqv? target (car lst)) (rember* target (cdr lst))]
+          [else (cons (car lst) (rember* target (cdr lst)))]
+          )))
+
+(define insertR*
+  (lambda (new old lst)
+    (cond [(null? lst) '()]
+          [(not(atom? (car lst))) (cons (insertR* new old (car lst))
+                                        (insertR* new old (cdr lst)))]
+          [(eqv? old (car lst)) (cons old (cons new (insertR* new old (cdr lst))))]
+          [else (cons (car lst) (insertR* new old (cdr lst)))]
+          )))
+
+(define occur*
+  (lambda (target lst)
+    (cond [(null? lst) 0]
+          [(not(atom? (car lst))) (my_add (occur* target (car lst))
+                                          (occur* target (cdr lst)))]
+          [(eqv? (car lst) target) (my_add 1 (occur* target (cdr lst)))]
+          [else (occur* target (cdr lst))]
+          )))
+
+(define subst*
+  (lambda (new old lst)
+    (cond [(null? lst) '()]
+          [(not (atom? (car lst))) (cons(subst* new old (car lst))
+                                  (subst* new old (cdr lst)))]
+          [(eqv? (car lst) old) (cons new (subst* new old (cdr lst)))]
+          [else (cons (car lst) (subst* new old (cdr lst)))]
+          )))
+
+(define insertL*
+  (lambda (new old lst)
+    (cond [(null? lst) '()]
+          [(not (atom? (car lst))) (cons (insertL* new old (car lst))
+                                         (insertL* new old (cdr lst)))]
+          [(eqv? (car lst) old) (cons new (cons old (insertL* new old (cdr lst))))]
+          [else (cons (car lst) (insertL* new old (cdr lst)))]
+          )))
+
+
+(define member*
+  (lambda (target lst)
+    (cond [(null? lst) #f]
+          [(not(atom? (car lst))) (or (member* target (car lst))
+                                     (member* target (cdr lst)))]
+          [(eqv? (car lst) target) #t]
+          [else (member* target (cdr lst))]
+          )))
+
+(define leftmost
+  (lambda (lst)
+    (cond [(not (atom? (car lst))) (leftmost (car lst))]
+          [else (car lst)]
+          )))
+
+;;Scheme裡的or似乎只要執行到最前項是true的, 後面的項就不執行了, 直接return true.
+
+(leftmost '((banana) (slipt ((((banana ice))) (cream (banana)) sherbet)) (banana) (bread) (banana brandy)))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
