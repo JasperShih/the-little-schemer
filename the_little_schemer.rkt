@@ -284,7 +284,76 @@
 ;;Scheme裡的or只要執行到最前項是true的, 後面的項就不執行了, 直接return true.
 ;;Scheme裡的and只要執行到最前項是false的, 後面的項就不執行了, 直接return false.
 
-(leftmost '((banana) (slipt ((((banana ice))) (cream (banana)) sherbet)) (banana) (bread) (banana brandy)))
+
+(define eqlist?
+  (lambda (lst1 lst2)
+    (cond [(and (null? lst1) (null? lst2)) #t]
+          [(or (null? lst1) (null? lst2)) #f]
+          [(and (not(atom?(car lst1)))
+                (not(atom?(car lst2)))) (and (eqlist? (car lst1) (car lst2))
+                                            (eqlist? (cdr lst1) (cdr lst2)))]
+          [(or (not(atom?(car lst1)))
+                (not(atom?(car lst2)))) #f]
+          [(eqan? (car lst1) (car lst2)) (eqlist? (cdr lst1) (cdr lst2))]
+          [else #f]
+          )))
+
+
+(define equal?
+  (lambda (sexp1 sexp2)
+    (cond [(and (atom? sexp1) (atom? sexp2)) (eqan? sexp1 sexp2)]
+          [(or (atom? sexp1) (atom? sexp2)) #f]
+          ;;There are two list of S-expression
+          [else (eqlist? sexp1 sexp2)]
+          )))
+
+(define eqlist2?
+  (lambda (lst1 lst2)
+    (cond [(or (atom? lst1) (atom? lst2)) #f]
+          [else (equal? lst1 lst2)]
+          )))
+
+;;is a number expression?
+(define numbered?
+  (lambda (exp)
+    (cond [(atom? exp) (number? exp)]
+          [(or (eq? (cadr exp) '+)
+               (eq? (cadr exp) '*)
+               (eq? (cadr exp) '^)) {and (number? (car exp))
+                                         (number? (caddr exp))}]
+          [else #f]
+          )))
+
+(define value
+  (lambda (exp)
+    (cond [(number? exp) exp]
+          [(pair? (car exp)) (value (cons (value (car exp)) (cdr exp)))]
+          [(eqv? (length exp) 1) (car exp)]
+          [(eq? (cadr exp) '+) (value (cons (+ (car exp) (caddr exp)) (cdddr exp)))]
+          [(eq? (cadr exp) '*) (value (cons (* (car exp) (caddr exp)) (cdddr exp)))]
+          [(eq? (cadr exp) '^) (value (cons (power (car exp) (caddr exp)) (cdddr exp)))]
+          )))
+
+
+(define sero?
+  (lambda (n)
+    (null? n)))
+
+(define edd1
+  (lambda (n)
+    (cons '() n)))
+
+(define zub1
+  (lambda (n)
+    (cdr n)))
+
+(define edd
+  (lambda (summand addend)
+    (cond [(sero? addend) summand]
+          [else (edd1 (edd summand (zub1 addend)))]
+          )))
+
+(edd '(() ()) '(() () ()))
 
 
 
