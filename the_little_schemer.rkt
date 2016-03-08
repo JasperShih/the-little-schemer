@@ -281,7 +281,8 @@
           [else (car lst)]
           )))
 
-;;Scheme裡的or似乎只要執行到最前項是true的, 後面的項就不執行了, 直接return true.
+;;Scheme裡的or只要執行到最前項是true的, 後面的項就不執行了, 直接return true.
+;;Scheme裡的and只要執行到最前項是false的, 後面的項就不執行了, 直接return false.
 
 (leftmost '((banana) (slipt ((((banana ice))) (cream (banana)) sherbet)) (banana) (bread) (banana brandy)))
 
