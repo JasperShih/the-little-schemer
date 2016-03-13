@@ -353,7 +353,35 @@
           [else (edd1 (edd summand (zub1 addend)))]
           )))
 
-(edd '(() ()) '(() () ()))
+(define union
+  (lambda (set1 set2)
+    (cond [(null? set1) set2]
+          [(member? (car set1) set2) (cons (car set1)
+                                           (union (cdr set1) (rember (car set1) set2)))]
+          [else (cons (car set1)
+                      (union (cdr set1) set2))]
+          )))
+
+
+(define intersect
+  (lambda (set1 set2)
+    (cond [(null? set1) '()]
+          [(member? (car set1) set2) (cons (car set1)
+                                           (intersect (cdr set1) set2))]
+          [else (intersect (cdr set1) set2)]
+          )))
+
+
+
+(define intersectall
+  (lambda (lst)
+    (cond[(null? (cdr lst)) (car lst)]
+         [else (intersect(car lst)
+                         (intersectall (cdr lst)))]
+         )))
+
+(intersectall '((1 2 3) (6 2 a 3 9 y) (2)))
+
 
 
 
