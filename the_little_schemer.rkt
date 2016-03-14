@@ -380,17 +380,97 @@
                          (intersectall (cdr lst)))]
          )))
 
-(intersectall '((1 2 3) (6 2 a 3 9 y) (2)))
+(define a_pair?
+  (lambda (x)
+    (cond[(null? x) #f]
+         [(null? (cdr x)) #f]
+         [(null? (cddr x)) #t]
+         [else #f]
+         )))
+
+(define revrel
+  (lambda (rel)
+    (cond[(null? rel) '()]
+         [else (cons (cons (cadr (car rel))
+                           (cons (car (car rel))
+                                 '()))
+                     (revrel (cdr rel)))]
+         )))
 
 
+(define rember_f
+  (lambda (test? a lst)
+    (cond[(null? lst) '()]
+         [(test? (car lst) a) (cdr lst)]
+         [else (cons (car lst)
+                     (rember_f test? a (cdr lst)))]
+         )))
+
+(define eq?_c
+  (lambda (a)
+    (lambda (x)
+      (eq? x a))))
+
+(define rember_f2
+  (lambda (test?)
+    (lambda (a lst)
+      (cond[(null? lst) '()]
+           [(test? (car lst) a) (cdr lst)]
+           [else (cons (car lst)
+                     ((rember_f2 test?) a (cdr lst)))]
+           ))))
 
 
+(define insertL_f
+  (lambda (test?)
+    (lambda (new old lat)
+      (cond[(null? lat) '()]
+           [(test? (car lat) old) (cons new lat)]
+           [else (cons (car lat) ((insertL_f test?) new old (cdr lat)))]
+           ))))
 
 
+(define insertR_f
+  (lambda (test?)
+    (lambda (new old lat)
+      (cond[(null? lat) '()]
+           [(test? (car lat) old) (cons old (cons new (cdr lat)))]
+           [else (cons (car lat) ((insertR_f test?) new old (cdr lat)))]
+           ))))
 
 
+(define insert_g
+  (lambda (seq)
+    (lambda (new old lat) 
+      (cond[(null? lat) '()]
+           [(eq? (car lat) old) (seq new old lat)]
+           [else (cons (car lat) ((insert_g seq) new old (cdr lat)))]
+           ))))
 
+(define left
+  (lambda (new old lat)
+    (cons new lat)))
 
+(define right
+  (lambda (new old lat)
+    (cons old (cons new (cdr lat)))))
+
+;(define insert_L (insert_g left))
+;(define insert_R (insert_g right))
+
+(define insert_L
+  (insert_g
+   (lambda (new old lat) (cons new lat)))) ;;此處定義了什麼是seq
+
+(define insert_R
+  (insert_g
+   (lambda (new old lat) (cons old (cons new (cdr lat)))))) ;;此處定義了什麼是seq
+
+(define insert_g_subst
+  (insert_g (lambda (new old lat)
+              (cons new (cdr lat)))))
+
+(insert_g_subst ' 7788 'jelly '(ggc jelly beans are good))
 
 
 
