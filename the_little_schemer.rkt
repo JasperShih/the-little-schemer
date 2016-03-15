@@ -470,7 +470,73 @@
   (insert_g (lambda (new old lat)
               (cons new (cdr lat)))))
 
-(insert_g_subst ' 7788 'jelly '(ggc jelly beans are good))
+
+(define atom_to_function
+  (lambda (x)
+    (cond[(eq? x '+) +]
+         [(eq? x '*) *]
+         [else power]
+         )))
+
+(define value2
+  (lambda (nexp)
+    (cond[(atom? nexp) nexp]
+         [else ((atom_to_function (cadr nexp)) (value2 (car nexp))
+                (value2 (caddr nexp)))]
+         )))
+
+;;(func1 arg1 arg2 ...)
+;;(func2 arg1 arg2 ...)
+;;(func3 arg1 arg2 ...)
+;;=>
+;;(func_selector arg1 arg2 ...)
+;;相同的arg sequence可以合併在一起
+;;所有的東西都可以看成(function arguments)
+;;function相同,不用改動; argument相同function不同, 可以被合併.
+
+(define multirember
+  (lambda (test?)
+    (lambda (a lst)
+      (cond[(null? lst) '()]
+           [(test? (car lst) a) ((multirember test?) a (cdr lst))]
+           [else (cons (car lst)
+                       ((multirember test?) a (cdr lst)))]
+           ))))
+
+(define eq?_tuna
+  (eq?_c 'tuna))
+
+(define multiremberT
+  (lambda (funct lst)
+    (cond[(null? lst) '()]
+         [(funct (car lst)) (multiremberT funct (cdr lst))]
+         [else (cons (car lst)
+                       (multiremberT funct (cdr lst)))]
+         )))
+
+
+(define multirember&co
+  (lambda (a lat col)
+    (cond [(null? lat) (col '() '())]
+          [(eq? (car lat) a) (multirember&co a (cdr lat) (lambda (newlat seen)
+                                                           (col newlat (cons (car lat) seen))))]
+          [else (multirember&co a (cdr lat) (lambda (newlat seen)
+                                              (col (cons (car lat) newlat) seen)))]
+          )))
+
+;;(((檢查box2是否為空 (cons 'and box1) box2)
+;;                                         box1 (cons box2 'tuna))
+;;                                                                 '() '())
+
+;;function像是水閥, args像是水源, function可以視為未來的水源.
+
+
+(define a_friend
+  (lambda (1st 2nd)
+    (null? 2nd)))
+
+;(col '() '())
+
 
 
 
