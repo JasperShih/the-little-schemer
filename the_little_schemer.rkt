@@ -183,7 +183,7 @@
 
 (define pick
   (lambda (index lst)
-    (cond [(= index 1) (car lst)]
+    (cond [(eq? index 1) (car lst)]
           [else (pick (sub1 index) (cdr lst))]
           )))
 
@@ -538,7 +538,85 @@
 ;(col '() '())
 
 
+;;Chapter 9
 
+(define eternity
+  (lambda (x)
+    (eternity x)))
+
+(define A
+  (lambda (n m)
+    (cond [(zero? n) (add1 m)]
+          [(zero? m) (A (sub1 n) 1)]
+          [else (A (sub1 n) (A n (sub1 m)))]
+          )))
+
+
+(lambda (lst)
+  (cond [(null? lst) 0]
+        [else (add1 (eternity (cdr lst)))]
+        ))
+
+
+((lambda (length)
+   (lambda (lst)
+     (cond [(null? lst) 0]
+           [else (add1 (length (cdr lst)))]
+           )))eternity)
+
+
+((lambda (mk)
+   (mk eternity))
+ (lambda (length)
+   (lambda (lst)
+     (cond [(null? lst) 0]
+           [else (add1 (length (cdr lst)))]
+           ))))
+
+
+((lambda (mk)
+   (mk mk))
+ (lambda (length)
+   (lambda (lst)
+     (cond [(null? lst) 0]
+           [else (add1 (length (cdr lst)))]
+           ))))
+
+;; =>
+(lambda (lst)
+  (cond [(null? lst) 0]
+        [else (add1 (
+                     (lambda (lst)
+                       (cond [(null? lst) 0]
+                             [else (add1 ((cdr lst) (cdr lst)))]
+                             ))
+                     ))]
+        ))
+
+
+
+((lambda (mk)
+   (mk mk))
+ (lambda (mk)
+   (lambda (lst)
+     (cond [(null? lst) 0]
+           [else (add1 ((mk eternity) (cdr lst)))]
+           ))))
+
+
+(
+((lambda (mk)
+   (mk mk))
+ (lambda (mk)
+   (lambda (lst)
+     (cond [(null? lst) 0]
+           [else (add1 ((mk eternity) (cdr lst)))]
+           ))))
+'(a))
+
+ 
+
+ 
 
 
 
