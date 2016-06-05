@@ -82,6 +82,43 @@
           [else *app]
           )))
 
+(define *const
+  (lambda (expression table)
+    (cond [(number? expression) expression]
+          [(eq? expression #t) #t]
+          [(eq? expression #f) #f]
+          [else (cons 'primitive (cons expression ()))]
+         )))
+
+(define *quote
+  (lambda (expression table)
+    (cadr expression)))
+
+(define *identifier
+  (lambda (expression table)
+    (lookup_in_table expression table (lambda (name) (car '())))))
+
+(define *lambda
+  (lambda (expression table)
+    (cons 'non_primitive
+          (cons table (cdr expression)))))
+
+(define else?
+  (lambda (x)
+    (cond [(atom? x) (eq? x 'else)]
+          [else #f]
+          )))
+
+(define evcon
+  (lambda (lines table)
+    (cond [(else? (caar lines)) (react (cadr (car lines)) table)]
+          [(react (car (car lines)) table) (react (cadr (car lines)) table)]
+          [else (evcon (cdr lines) table)]
+          )))
+
+(define *cond
+  (lambda (expression table)
+    (evcon (cdr expression) table)))
 
 
 
