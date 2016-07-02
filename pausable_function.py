@@ -23,62 +23,7 @@ def cdr(lst):
 def show(arg):
 	print arg
 
-def get_left_atom(lst):
-	lst_car = []
-	lst_cdr = []
-	if (not is_null(lst)):
-		lst_car = car(lst)
-		lst_cdr = cdr(lst)
-		
-
-	if is_null(lst):
-		return []
-	elif is_atom(lst_car):
-		show(lst_car)
-	else:
-		# try to approach letcc
-		lst_car_return = get_left_atom(lst_car)
-		condition = is_atom(lst_car_return)
-		if (not condition):
-			return get_left_atom(lst_cdr)
-#	else:
-#		if (not is_atom(get_left_atom(lst_car))):
-#			return get_left_atom(lst_cdr)			
-
-def pause(arg):
-	print arg
 	
-
-def get_left_atom_v2(lst):
-	board = []
-	
-	def helper(lst):
-		lst_car = []
-		lst_cdr = []
-		if (not is_null(lst)):
-			lst_car = car(lst)
-			lst_cdr = cdr(lst)
-			
-
-		if is_null(lst):
-			return []
-		elif is_atom(lst_car):
-			board.append("got_atom")
-			
-
-			return lst_car
-			#pause(lst_car)
-			#return get_left_atom_v2(lst_cdr)
-		else:
-			lst_car_result = helper(lst_car)
-			if (board == []):
-				return helper(lst_cdr)
-			else:
-				return lst_car_result
-	
-	return helper(lst)
-
-
 board = []
 buf = []
 def helper(lst):
@@ -136,12 +81,6 @@ def play():
 		else:
 			print result
 	
-	
-#print atom
-#helper(inner_cdr)
-#print outer_cdr
-
-#print c(b)
 
 start([[], ["a"], "b", "c"])
 play()
@@ -150,18 +89,32 @@ play()
 play()
 
 
-#play([[["a"]],[]])
+
+
 
 """
-global buf
-	if (buf != []):
-		tmp = car(buf)
-		buf = cdr(buf)
-		return tmp
+def get_left_atom(lst):
+	lst_car = []
+	lst_cdr = []
+	if (not is_null(lst)):
+		lst_car = car(lst)
+		lst_cdr = cdr(lst)
+		
+
+	if is_null(lst):
+		return []
+	elif is_atom(lst_car):
+		show(lst_car)
+	else:
+		# try to approach letcc
+		lst_car_return = get_left_atom(lst_car)
+		condition = is_atom(lst_car_return)
+		if (not condition):
+			return get_left_atom(lst_cdr)
+#	else:
+#		if (not is_atom(get_left_atom(lst_car))):
+#			return get_left_atom(lst_cdr)			
 """
-
-
-
 
 
 
