@@ -36,24 +36,129 @@ def get_left_atom(lst):
 	elif is_atom(lst_car):
 		show(lst_car)
 	else:
-		get_left_atom(lst_car)
-		#上面一行就算找到atom, 程式仍然會執行下面一行, 
-		#我們希望的是:若上面一行有找到atom就不執行下面一行
-		return get_left_atom(lst_cdr)
+		# try to approach letcc
+		lst_car_return = get_left_atom(lst_car)
+		condition = is_atom(lst_car_return)
+		if (not condition):
+			return get_left_atom(lst_cdr)
+#	else:
+#		if (not is_atom(get_left_atom(lst_car))):
+#			return get_left_atom(lst_cdr)			
 
-#def start(lst):
-	#get_left_atom(lst)
+def pause(arg):
+	print arg
 	
+
+def get_left_atom_v2(lst):
+	board = []
 	
+	def helper(lst):
+		lst_car = []
+		lst_cdr = []
+		if (not is_null(lst)):
+			lst_car = car(lst)
+			lst_cdr = cdr(lst)
+			
+
+		if is_null(lst):
+			return []
+		elif is_atom(lst_car):
+			board.append("got_atom")
+			
+
+			return lst_car
+			#pause(lst_car)
+			#return get_left_atom_v2(lst_cdr)
+		else:
+			lst_car_result = helper(lst_car)
+			if (board == []):
+				return helper(lst_cdr)
+			else:
+				return lst_car_result
+	
+	return helper(lst)
+
+
+board = []
+buf = []
+def helper(lst):
+	global board, buf
+	lst_car = []
+	lst_cdr = []
+	if (not is_null(lst)):
+		lst_car = car(lst)
+		lst_cdr = cdr(lst)
+		
+		
+	if is_null(lst):
+		board = "got_null"
+		return []
+	elif is_atom(lst_car):
+		board = "got_atom"
+		buf.append(lst_cdr)
+		return lst_car
+	else:
+		lst_car_result = helper(lst_car)
+		if (board == "got_atom"):
+			buf.append(lst_cdr)
+			return lst_car_result
+		else:
+			return helper(lst_cdr)
+				
+				
+	
+# it is same form as
+# (let()
+#	(funct1 arg)
+#	(funct2 arg))
 
 def trit(arg):
 	is_list(arg)
 	return car(arg)
 	
 
-get_left_atom([[], ["a"], "b", "c"])
+def start(lst):
+	result = helper(lst)
+	if is_null(result):
+		print "List exhausted"
+	else:
+		print result
+	
+def play():
+	global buf
+	if is_null(buf):
+		print "List exhausted"
+	else:
+		result = helper(car(buf))
+		buf = cdr(buf)
+		if is_null(result):
+			play()
+		else:
+			print result
+	
+	
+#print atom
+#helper(inner_cdr)
+#print outer_cdr
+
+#print c(b)
+
+start([[], ["a"], "b", "c"])
+play()
+play()
+play()
+play()
 
 
+#play([[["a"]],[]])
+
+"""
+global buf
+	if (buf != []):
+		tmp = car(buf)
+		buf = cdr(buf)
+		return tmp
+"""
 
 
 
