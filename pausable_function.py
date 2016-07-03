@@ -1,5 +1,9 @@
 # -*- coding: utf8 -*-
-null = []
+
+# 將global變數整進function中
+# Can we merge play and start functions together?
+# abstract similiry logic
+# review the code and think about it
 
 def is_list(arg):
 	return type(arg) == list
@@ -19,9 +23,6 @@ def car(lst):
 	
 def cdr(lst):
 	return lst[1:]
-
-def show(arg):
-	print arg
 
 	
 board = []
@@ -49,18 +50,14 @@ def helper(lst):
 			return lst_car_result
 		else:
 			return helper(lst_cdr)
-				
-				
-	
-# it is same form as
-# (let()
-#	(funct1 arg)
-#	(funct2 arg))
 
-def trit(arg):
-	is_list(arg)
-	return car(arg)
+def step(lst):
+	if is_null(lst):
+		return "List exhausted"
+	else:
+		
 	
+	return atom
 
 def start(lst):
 	result = helper(lst)
@@ -89,10 +86,50 @@ play()
 play()
 
 
+def receiver(atom):
+	print atom
+	
+
+def get_left(lst):
+	lst_car = None
+	
+	if is_null(lst):
+		lst_car = car(lst)
+		lst_cdr = cdr(lst)
+		return []
+	else: #
+		is_atom(lst_car):
+		receiver(lst_car)
+		get_left(lst_cdr)
+	else:
+		get_left(lst_car)
+		get_left(cdr(lst))
+	
+
+		
+	
+	
+		
+# atom
+# null
+# list
+	
+	
+	
+
 
 
 
 """
+#it is same form as
+# (let()
+#	(funct1 arg)
+#	(funct2 arg))
+
+def trit(arg):
+	is_list(arg)
+	return car(arg)
+
 def get_left_atom(lst):
 	lst_car = []
 	lst_cdr = []
