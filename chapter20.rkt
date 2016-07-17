@@ -189,6 +189,18 @@
 ;; 我們知道我們的interpreter會為app的args extend table, 所以我們不用重複計算args部分?
 
 
+(define handle_cond
+  (lambda (exp table)
+    (evcon (cdr exp) table)))
+
+(define evcon
+  (lambda (lines table)
+    (cond [(eq? (caar lines) 'else) (meaning (cadar exp) table)]
+          [(meaning (caar lines) table) (meaning (cadar exp) table)]
+          [else (evcon (cdr lines table))]
+          )))
+
+
 
 
 
