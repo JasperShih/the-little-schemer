@@ -201,15 +201,75 @@
           )))
 
 
+(define handle_letcc
+  (lambda (exp table)
+    (let/cc skip
+      (deal_lambda_exps (cddr exp) (extend
+                                    (cadr exp)
+                                    (box (one_prim skip))
+                                    table)))))
+
+;; 在我們使用了客製letcc函數後, 要擔心的只有一個問題, 就是afterward的程式碼中遇到(客製letcc的第一個參數名)要如何處理?
+;; 於是我們先用scheme的letcc來interpret客製letcc後, 再來處理afterward的程式碼.
+;;
+;;
+;; 這裡只是用letcc來解釋letcc, 而不是去考慮如何用lambda去實現letcc;
+;; 這裡只做兩件事:
+;; 1.解釋客製letcc的第一個參數名字(在talbe中加入該參數名, 以及它的值, 使得該參數名有了意義)
+;;   他的值其實就是letcc skip(就只是用scheme內建的letcc來實現我們的客製letcc)
+;;
+;; 2.計算deal_lambda_exps, 如果在計算中遇到該參數名, 1就是該參數的意義, 所以所有的語法我們的interpreter都認得,
+;;   就如同以前處理deal_lambda_exps一樣
 
 
+(define abort '())
 
+(define interpreter
+  (lambda (exp)
+    (let/cc the_end
+      (set! abort the_end)
+      (cond [(eq? (car exp) 'define) (handle_define exp)]
+            [else (the_meaning exp)]
+            ))))
 
+(define the_empty_table
+  (lambda (name)
+    (abort (cons 'no_anwser
+                 (cons name '())
+                 ))))
 
+(define exp_to_act
+  (lambda (exp)
+    (cond [(atom? exp) (atom_to_act exp)]
+          [else (list_to_act exp)]
+          )))
 
+(define atom_to_act
+  (lambda (exp)
+    (cond [(number? exp) handle_const]
+          [(eq? exp #t) handle_const]
+          [(eq? exp #f) handle_const]
+          [(eq? exp 'cons) handle_const]
+          [(eq? exp 'car) handle_const]
+          [(eq? exp 'cdr) handle_const]
+          [(eq? exp 'null?) handle_const]
+          [(eq? exp 'eq?) handle_const]
+          [(eq? exp 'atom?) handle_const]
+          [(eq? exp 'zero?) handle_const]
+          [(eq? exp 'number?) handle_const]
+          [else handle_identifier]
+          )))
 
-
-
+(define list_to_act
+  (lambda (exp)
+    (cond [(atom? (car exp)) (cond [(eq? (car exp) 'lambda) handle_lambda]
+                                   [(eq? (car exp) 'letcc) handle_letcc]
+                                   [(eq? (car exp) 'set!) handle_set]
+                                   [(eq? (car exp) 'cond) handle_cond]
+                                   [else handle_app]
+                                   )]
+          [else handle_app]
+          )))
 
 
 
