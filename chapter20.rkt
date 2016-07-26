@@ -9,35 +9,35 @@
 ;; so table can be represented by function, we give table a name arg, then it return a value
 
 
-(define func_empty_table
+(define F_empty_table
   (lambda (target_name)
     (abort ((cons target_name 
                   '(is no anwser)))
       )))
 
-(define func_global_table func_empty_table)
+(define F_global_table F_empty_table)
 
-(define func_atom?
+(define F_atom?
   (lambda (x)
     (and (not (pair? x))
          (not (null? x))
      )))
 
 
-(define func_extend_table
+(define F_extend_table
   (lambda (inserted_entry_name
            inserted_entry_value
-           func_original_table)  
-    (letrec ([func_new_table (lambda (search_name)
+           F_original_table)  
+    (letrec ([F_new_table (lambda (search_name)
                                  (cond [(eq? search_name 
                                              inserted_entry_name) inserted_entry_value]
-                                       [else (func_original_table search_name)]))]
+                                       [else (F_original_table search_name)]))]
              )
-    func_new_table
+    F_new_table
     )))
 
 
-;; 新增規則, 動詞或後綴func都是function?
+;; 前綴F是function
 (define func_pack
   (lambda (value)
     (letrec ([func_update (lambda (new_value) (set! value new_value))]
