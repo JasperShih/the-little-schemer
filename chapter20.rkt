@@ -9,50 +9,49 @@
 ;; so table can be represented by function, we give table a name arg, then it return a value
 
 
-(define empty_search_table
+(define func_empty_table
   (lambda (target_name)
     (abort ((cons target_name 
                   '(is no anwser)))
       )))
 
-(define search_global_table empty_search_table)
+(define func_global_table func_empty_table)
 
-(define atom?
+(define func_atom?
   (lambda (x)
     (and (not (pair? x))
          (not (null? x))
      )))
 
 
-(define extend_search_table
+(define func_extend_table
   (lambda (inserted_entry_name
            inserted_entry_value
-           original_search_table)  
-    (letrec ([new_search_table (lambda (search_name)
+           func_original_table)  
+    (letrec ([func_new_table (lambda (search_name)
                                  (cond [(eq? search_name 
                                              inserted_entry_name) inserted_entry_value]
-                                       [else (original_search_table search_name)]))]
+                                       [else (func_original_table search_name)]))]
              )
-    new_search_table
+    func_new_table
     )))
 
 
 ;; 新增規則, 動詞或後綴func都是function?
-(define pack
+(define func_pack
   (lambda (value)
-    (letrec ([update_value (lambda (new_value) (set! value new_value))]
-             [func_package (lambda (pick) (pick value update_value))]
+    (letrec ([func_update (lambda (new_value) (set! value new_value))]
+             [func_package (lambda (func_pick) (func_pick value func_update))]
              )
       func_package
       )))
 
-=======
+(define func_update_package
+  (lambda (func_package new_value)
+    (func_package (lambda (value func_update) (func_update new_value)))))
 
-(define setbox
-  (lambda (box new_value)
-    (box (lambda (original_value update) (update new_value)))))
 
-(define get_value
+(define func_get_value
   (lambda (box)
     (box (lambda (original_value update) original_value))))
 
