@@ -1,59 +1,52 @@
 #lang racket
 
-(define atom?
-  (lambda (x)
-    (and (not (pair? x)) (not (null? x)))))
 
 ;; what is function? function is that you give args to it, it will return values back.
 ;;
 ;; what is table? table is that you give a name to it, it will search the same name
-;; in its data structure then return the value of name.
+;; in its data structure, then return the value of name.
 ;;
 ;; so table can be represented by function, we give table a name arg, then it return a value
 
-(define global_table '())
 
-(define lookup
-  (lambda (table name)
-    (table name)))
-
-(define extend
-  (lambda (name value table)
-    (lambda (target)
-      (cond [(eq? target name) value]
-            [else (table target)]
-            ))
-    ))
-
-(define define?
-  (lambda (exp)
-    (cond [(atom? exp) #f]
-          [(atom? (car exp)) (eq? (car exp) 'define)]
-          [else #f]
-          )))
-
-(define name_of
-  (lambda (exp)
-    (cadr exp)))
-
-(define get_right_side
-  (lambda (exp)
-    (cddr exp)))
-
-(define handle_define
-  (lambda (exp)
-    (set! global_table (extend (name_of exp)
-                               (box (the_meaning (get_right_side exp)))
-                               global_table))))
-
-(define box
-  (lambda (original_value)
-    (lambda (selector)
-      (selector original_value
-                (lambda (new_value) (set! original_value new_value)))
+(define empty_search_table
+  (lambda (target_name)
+    (abort ((cons target_name 
+                  '(is no anwser)))
       )))
 
-;; functional programming 的function為動詞, 其他為名詞; 我認為應該分清楚避免混淆概念
+(define search_global_table empty_search_table)
+
+(define atom?
+  (lambda (x)
+    (and (not (pair? x))
+         (not (null? x))
+     )))
+
+
+(define extend_search_table
+  (lambda (inserted_entry_name
+           inserted_entry_value
+           original_search_table)  
+    (letrec ([new_search_table (lambda (search_name)
+                                 (cond [(eq? search_name 
+                                             inserted_entry_name) inserted_entry_value]
+                                       [else (original_search_table search_name)]))]
+             )
+    new_search_table
+    )))
+
+
+;; 新增規則, 動詞或後綴func都是function?
+(define pack
+  (lambda (value)
+    (letrec ([update_value (lambda (new_value) (set! value new_value))]
+             [func_package (lambda (pick) (pick value update_value))]
+             )
+      func_package
+      )))
+
+=======
 
 (define setbox
   (lambda (box new_value)
@@ -66,15 +59,24 @@
 
 (define the_meaning
   (lambda (exp)
-    (meaning exp lookup_in_global_table)))
+    (meaning exp lookup_in_search_global_table)))
 
-(define lookup_in_global_table
+(define lookup_in_search_global_table
   (lambda (name)
-    (lookup global_table name)))
+    (search_global_table name)))
 
 (define meaning
   (lambda (exp table)
     ((exp_selector exp) exp table)))
+
+
+(define handle_define
+  (lambda (exp)
+    (set! search_global_table (extend_search_table (cadr exp)
+                               (box (the_meaning (caddr exp)))
+                               search_global_table)
+          )))
+
 
 (define handle_quote
   (lambda (exp table)
@@ -232,12 +234,6 @@
             [else (the_meaning exp)]
             ))))
 
-(define the_empty_table
-  (lambda (name)
-    (abort (cons 'no_anwser
-                 (cons name '())
-                 ))))
-
 (define exp_to_act
   (lambda (exp)
     (cond [(atom? exp) (atom_to_act exp)]
@@ -270,13 +266,6 @@
                                    )]
           [else handle_app]
           )))
-
-
-
-
-
-
-
 
 
 
