@@ -1,0 +1,7 @@
+<snippet>
+<content>
+(null? $1) $2
+</content>
+
+<tabTrigger>null</tabTrigger>
+</snippet>

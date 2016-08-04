@@ -1,0 +1,12 @@
+<snippet>
+<content>
+(define ${1:name}
+  (lambda (${2:args})
+    (letrec ([$4]
+             )
+      ${3:return_value}
+      )))
+</content>
+
+<tabTrigger>def</tabTrigger>
+</snippet>
