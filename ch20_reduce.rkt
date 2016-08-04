@@ -1,59 +1,67 @@
 #lang racket
 
-;;--------------  main logic -------------
-;(define interpreter
- ; (lambda (exp)
-  ;  (letrec ([exps '(car list)]
-   ;          [values (list car list)])
-    ;  
-     ; (letrec ([value (consult exp exps values 'ERROR)])
-      ;  value
-       ; )
-      
-      ;)))
-      
 (define interpreter
   (lambda (exp)
-    (letrec {[exps '(car list)]
-       		 [values (list car list)]
     
-   	[value (consult exp exps values 'ERROR)]}
-     value
-    )))
+    [define handle_car car]
+    [define handle_cdr cdr]
+    
+    ; 若直接(cadr exp), 如果exp是atom會出錯, 改成函數形式, call才求值
+    [define handle_quote
+     (lambda ()
+       (cadr exp))] 
+    
+    [define handle_app
+     (lambda ()
+       (interpreter (car exp)) )]
+    
+    [define atom_exp_flow
+      (lambda ()
+        (define atoms (list [list 'car handle_car]
+                       		[list 'cdr handle_cdr]))
+        (engage exp atoms 'not_found)
+       )]
+    
+    [define list_exp_flow
+      (lambda ()
+        (define lists (list [list 'app handle_app]
+                            [list 'quote handle_quote]))
+        (engage (car exp) lists 'not_found)
+       )]
+    
+    (cond [(F_atom? exp) (atom_exp_flow)]
+          [else (list_exp_flow)]
+          )
+    ))
 
 
-;;--------- complete function & data ------------
+
+
+(define F_atom?
+  (lambda (x)
+    (and (not (pair? x))
+         (not (null? x))
+     )))
+
 
 (define engage
-  (lambda (stuff candidates fail)
-    (letrec ([reduce_version (lambda (candidates) 
-                                (cond {(null? candidates) fail}
-                                  	  {(eq? stuff (car candidates)) (car candidates)}
-                         	          {else (reduce_version (cdr candidates))}
-                              ))]
-             
-             [ans (reduce_version candidates)]
-             )
-      ans
-      )))
+  (lambda (exp candidates fail)
+    (cond [(null? candidates) fail]
+          [(eq? exp (caar candidates)) (cadar candidates)]
+          [else (engage exp (cdr candidates) fail)]
+          )))
 
-(define consult
-  (lambda (index indices values not_found)
-    (letrec ([reduce_ver (lambda (indices values)
-                           (cond {(null? indices) not_found}
-                                 {(eq? index (car indices)) (car values)}
-                                 {else (reduce_ver (cdr indices) (cdr values))}
-                                 ))]
-             
-             [value (reduce_ver indices values)]
-             )
-      value
-      )))
 
-;(consult 'fly '(ball fish fly) '(A B C) 'ERROR)
+(interpreter '(app aaa))
 
-(interpreter 'car)
 
+
+
+;;(define atoms '(car cdr))
+;;(define handlers (list handle_car handle_cdr))
+;;不應用到兩個list
+
+;;應該用[('car handle_car) ('cdr handle_cdr)]及engage
 
 
 
